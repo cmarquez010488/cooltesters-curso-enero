@@ -5,8 +5,8 @@ public class IsOdd {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		int number = 26;
-		int start = 1;
-		int end = 100;
+		int start = 100;
+		int end = 1000;
 		
 		if(isOdd(number)==true) {
 			System.out.println("Was Odd");
