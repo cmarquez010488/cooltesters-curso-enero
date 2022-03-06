@@ -332,15 +332,163 @@ public class Admin {
 		Assert.assertEquals(driver.findElement(By.xpath("//tbody/tr")).getText(), msgNoRecords);
 
 		// Step 16
-		Reporter.log("Log out");
-		driver.findElement(By.id("welcome")).click();
-		driver.findElement(By.xpath("//a[contains(@href, 'logout')]")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-
-		// Step 17
 		Reporter.log("Close Browser");
 		driver.close();
 
+	}
+
+	@Test
+	public void tc005AdminCreateUserDisabled() throws InterruptedException {
+		String otherUser = randomString();
+
+		// Step 1
+		Reporter.log("Open Browser \"OrangeHRM\" web page");
+		System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chrome/chromedriver1.exe");
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://opensource-demo.orangehrmlive.com/");
+		driver.manage().window().maximize();
+
+		// Step 2
+		Reporter.log("Enter Username, Password and click Login");
+		driver.findElement(By.id("txtUsername")).sendKeys(username);
+		driver.findElement(By.id("txtPassword")).sendKeys(password);
+		driver.findElement(By.id("btnLogin")).click();
+
+		// Step 3
+		Reporter.log("Validate that you have logged in successfully");
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id='welcome']")));
+
+		// Step 4
+		Reporter.log("Click Admin - Go to the admin page");
+		driver.findElement(By.xpath("//a[@id='menu_admin_viewAdminModule']")).click();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+		// Step 5
+		Reporter.log("Click Add Button");
+		driver.findElement(By.xpath("//*[@id=\"btnAdd\"]")).click();
+
+		// Step 6
+		Reporter.log("Enter a Valid Employee Name");
+		driver.findElement(By.xpath("//*[@id=\"systemUser_employeeName_empName\"]")).sendKeys(newEmployee);
+
+		// Step 7
+		Reporter.log("Enter a Valid User Name");
+		driver.findElement(By.xpath("//*[@id=\"systemUser_userName\"]")).sendKeys(otherUser);
+
+		// Step 8
+		Reporter.log("Change status tu disabled");
+		driver.findElement(By.xpath("//*[@id=\"systemUser_status\"]/option[2]")).click();
+
+		// Step 9
+		Reporter.log("Enter new password ");
+		driver.findElement(By.xpath("//*[@id=\"systemUser_password\"]")).sendKeys(newpassword);
+
+		// Step 10
+		Reporter.log("Enter  confirm password ");
+		driver.findElement(By.xpath("//*[@id=\"systemUser_confirmPassword\"]")).sendKeys(newpassword);
+
+		// Step 11
+		Reporter.log("Click Save");
+		Thread.sleep(2000);
+		driver.findElement(By.xpath("//*[@id=\"btnSave\"]")).click();
+
+		// Step 12
+		Reporter.log("Search username in field \"Username\"");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("searchSystemUser_userName")));
+		driver.findElement(By.id("searchSystemUser_userName")).sendKeys(otherUser);
+
+		// Step 13
+		Reporter.log("Click Search");
+		driver.findElement(By.id("searchBtn")).click();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+		// Step 14
+		Reporter.log("Verify username exist in table and status is disabled");
+
+		// AssertEquals
+		String actualValue = driver.findElement(By.xpath("//*[@id=\"resultTable\"]/tbody/tr/td[2]/a")).getText();
+		Assert.assertEquals(actualValue, otherUser);
+
+		String actualStatus = driver.findElement(By.xpath("//*[@id=\"resultTable\"]/tbody/tr/td[5]")).getText();
+		Assert.assertEquals(actualStatus, "Disabled");
+
+		// Step 15
+		Reporter.log("Close Browser");
+		driver.close();
+	}
+
+	@Test
+	public void tc006ValidateUserAdmin() {
+
+		// Step 1
+		Reporter.log("Open Browser \"OrangeHRM\" web page");
+		System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chrome/chromedriver1.exe");
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://opensource-demo.orangehrmlive.com/");
+		driver.manage().window().maximize();
+
+		// Step 2
+		Reporter.log("Enter Username, Password and click Login");
+		driver.findElement(By.id("txtUsername")).sendKeys(username);
+		driver.findElement(By.id("txtPassword")).sendKeys(password);
+		driver.findElement(By.id("btnLogin")).click();
+
+		// Step 3
+		Reporter.log("Validate that you have logged in successfully");
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id='welcome']")));
+
+		// Step 4
+		Reporter.log("Click Admin - Go to the admin page");
+		driver.findElement(By.xpath("//a[@id='menu_admin_viewAdminModule']")).click();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+		// Step 5
+		Reporter.log("Search username in field \"Username\"");
+		wait.until(ExpectedConditions.elementToBeClickable(By.id("searchSystemUser_userName")));
+		driver.findElement(By.id("searchSystemUser_userName")).sendKeys(username);
+
+		// Step 6
+		Reporter.log("Click Search");
+		driver.findElement(By.id("searchBtn")).click();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+
+		// Step 7
+		Reporter.log("Verify username exist in table and status is disabled");
+
+		// AssertEquals
+		String actualValue = driver.findElement(By.xpath("//*[@id=\"resultTable\"]/tbody/tr/td[2]/a")).getText();
+		Assert.assertEquals(actualValue, username);
+
+		// Step 8
+		Reporter.log("Close Browser");
+		driver.close();
+
+	}
+
+	@Test
+	public void tc007ValidateUserAdmin() {
+		// Step 1
+		Reporter.log("Open Browser \"OrangeHRM\" web page");
+		System.setProperty("webdriver.chrome.driver", "./src/test/resources/drivers/chrome/chromedriver1.exe");
+		WebDriver driver = new ChromeDriver();
+		driver.get("https://opensource-demo.orangehrmlive.com/");
+		driver.manage().window().maximize();
+
+		// Step 2
+		Reporter.log("Enter Username, Password and click Login");
+		driver.findElement(By.id("txtUsername")).sendKeys(username);
+		driver.findElement(By.id("txtPassword")).sendKeys(randomString());
+		driver.findElement(By.id("btnLogin")).click();
+
+		// Step 3
+		Reporter.log("Validate error message");
+		Assert.assertTrue(driver.findElement(By.id("spanMessage")).isDisplayed());
+
+		// Step 4
+		Reporter.log("Close Browser");
+		driver.close();
 	}
 
 }
